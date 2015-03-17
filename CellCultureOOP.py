@@ -9,9 +9,11 @@ from pylab import *
 #import numpy as np
 import copy
 
-ion()
+#ion()
 
 class Cell(object):
+    number = 0
+    instances = []
     ''' store number and instances'''
     def __init__(self):
         type(self).instances.append(self)
@@ -41,9 +43,6 @@ class T(Cell):
    def entercycle(self):
        self.cy = True
        self.mt = 12.0
-   def countdown(self,dt):
-       self.mt -= dt
-       return self
    def advance(self):
        ''' reset attributes just before division '''
        self.ge += 1
@@ -56,11 +55,17 @@ class T(Cell):
        type(self).instances.append(newcell)
        type(self).number += 1
        return newcell
+   def cellstep(self,dt):
+       if self.cy:
+           self.mt -= dt
+           if self.mt<0:
+               return True
+       elif stim*dt*self.la>random():
+               self.entercycle()
+       return False
 
 class CD4(T):
     ''' CD4 T cell class '''
-    number = 0
-    instances = []
     def __init__(self,thisg):
         T.__init__(self,thisg)
         self.ct = 'CD4'
@@ -80,19 +85,10 @@ class CellPopulation(object):
         self.ncells = ncells
         self.celllist = [celltype[ctype](initialcondition) for i in xrange(ncells)]    
 
-    #profile
+    #@profile
     def step(self,dt):
         ''' in a time interval dt, some cells enter cycle and other complete it'''
-        # activation
-        restinglist = [cell for cell in self.celllist if not cell.cy]
-        activatelist = [thiscell for thiscell in restinglist if stim*dt*thiscell.la > random()]
-        for thiscell in activatelist:
-            thiscell.entercycle()
-        # division
-        cyclinglist = [thiscell.countdown(dt) for thiscell in self.celllist if thiscell.cy]
-        divisionlist = [thiscell for thiscell in cyclinglist if thiscell.mt<0]
-        daughtercelllist = [mother.celldivision() for mother in divisionlist]
-        self.celllist += daughtercelllist
+        self.celllist += [cell.celldivision() for cell in self.celllist if cell.cellstep(dt)]
 
     def rsublist(self,n):
         '''random sublist of n cells, unweighted'''
@@ -138,13 +134,15 @@ while t < tmax-dt/100:
     t += dt
     cdeights.step(dt)
     g = cdeights.gennumbers(8)
-    print(t,CD8.number,len(cdeights.celllist),len(CD8.instances),g)
-    config.set_ydata(g)
-    timetext.set_text(str(t)+' hours')
-    draw()
+    #print(t,CD8.number,len(cdeights.celllist),len(CD8.instances),g)
+
+    #config.set_ydata(g)
+    #timetext.set_text(str(t)+' hours')
+    #draw()
 
 #bar(arange(len(g)),g)
-savefig('generations.png')
+#savefig('generations.png')
 
+print(t,CD8.number,len(cdeights.celllist),len(CD8.instances),g)
 
 
