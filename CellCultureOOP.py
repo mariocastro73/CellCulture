@@ -6,7 +6,7 @@
 from __future__ import print_function
 from random import shuffle,sample,expovariate,random
 from pylab import *
-#import numpy as np
+from collections import defaultdict
 import copy
 
 #ion()
@@ -104,13 +104,10 @@ class CellPopulation(object):
         return sublist
         
     def gennumbers(self,maxn):
-        i=0
-        g = []
-        while i<maxn:
-            g.append(len([thiscell.ge for thiscell in self.celllist if thiscell.ge==i]))
-            i += 1
-        return g
-
+        counter = defaultdict(int)
+        for g in [p.ge for p in self.celllist]:
+            counter[g] += 1
+        return [counter[i] for i in range(maxn)]
 
 def myprint(mylist):
     [print("{:.2f}".format(x),end=' ') for x in mylist]
