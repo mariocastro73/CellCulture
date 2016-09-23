@@ -128,7 +128,10 @@ class simulation(object):
       pylab.plot(self.tforplot,[7*gmax*(1-exp(-10*nu*t))/sfac for t in self.tforplot],
               ':r',label='weekly division')
       pylab.xlabel('$t$ / weeks')
+      pylab.xticks([28*i for i in range(int(tmax/28)+1)],
+                   [4*i for i in range(int(tmax/14)+1)])
       pylab.ylabel('millions of cells')
+      pylab.yticks([1e7,2e7],[10,20])
       pylab.legend(loc='upper right')
       mydate = datetime.datetime.today().strftime("%d%b%H%M")
       pylab.savefig('Mouse-'+str(int(100*sfac))+str(mydate)+'.png')
@@ -138,6 +141,8 @@ class simulation(object):
       pylab.plot(self.tforplot,[1 for t in self.tforplot])
       pylab.xlabel('$t$ / weeks')
       pylab.xlim([0,max(self.tforplot)])
+      pylab.xticks([28*i for i in range(int(tmax/28)+1)],
+                   [4*i for i in range(int(tmax/14)+1)])
       pylab.ylim([0,max(self.ratioforplot)*1.1])
       pylab.ylabel('ratio CD4 to CD8')
       pylab.legend(loc='upper right')
@@ -148,7 +153,7 @@ class simulation(object):
 # scaling factor
 sfac = 0.1  # fraction of the whole mouse (use sfac = 1 for whole mouse)
 # thymic production:
-nthy,f8 = 4,1.0/3  # cells per new clone, fraction CD8
+nthy,f8 = 4,1.0/5  # cells per new clone, fraction CD8
 thymax,nu = 1000000*sfac,0.004 # daily thymic rate at 8 weeks, decay rate
 # periphery:
 gmax,mu = 200000*sfac,{'CD4':0.030,'CD8':0.015}  # peripheral division and death 
