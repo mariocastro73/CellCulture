@@ -1,2 +1,2 @@
-# CellCulture
-Python code for Agent Based Modeling of cell populations
+# MouseChapter
+A tutorial Python code for Agent Based Modeling of T-cell populations
